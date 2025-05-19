@@ -1,0 +1,51 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Jupyter / IPython stuff
+.ipynb_checkpoints/
+
+# macOS / Linux / Windows cruft
+.DS_Store
+Thumbs.db
+
+# Virtual environments
+.env/
+.venv/
+venv/
+ENV/
+env/
+
+# dotenv files (if storing paths/secrets locally)
+.env
+
+# VS Code and IDEs
+.vscode/
+.idea/
+
+# Pytest and test outputs
+.cache/
+.tox/
+.coverage
+*.cover
+htmlcov/
+test-results/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Outputs
+*.log
+*.csv
+*.png
+*.mp4
+
+# Custom output folders
+output/
+data/output/
+results/
