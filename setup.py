@@ -15,7 +15,9 @@ setup(
         "numpy",
         "matplotlib",
         "scipy",
-        "loguru"
+        "loguru",
+        "python-box",
+        "fastdtw"
     ],
     entry_points={
         "console_scripts": [
