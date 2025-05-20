@@ -1,0 +1,10 @@
+fastdtw==0.3.4
+loguru==0.7.2
+matplotlib==3.7.4
+mediapipe==0.10.11
+numpy==1.24.4
+opencv-python==4.11.0.86
+python-box==7.2.0
+scipy==1.10.1
+setuptools==68.2.2
+pytest==8.3.5
