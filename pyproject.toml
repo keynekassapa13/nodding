@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nodding"
+version = "0.1.0"
+description = "Detect head nodding behavior from video using MediaPipe"
+authors = [
+  { name = "Your Name", email = "you@example.com" }
+]
+readme = "README.md"
+requires-python = ">=3.8"
+
+dependencies = [
+  "opencv-python",
+  "mediapipe",
+  "numpy",
+  "matplotlib",
+  "scipy",
+  "loguru"
+]
+
+[project.scripts]
+nodding = "nodding.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["nodding"]
