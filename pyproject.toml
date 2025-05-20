@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nodding"
-version = "0.1.0"
+version = "0.1.1"
 description = "Detect head nodding behavior from video using MediaPipe"
 authors = [
-  { name = "Your Name", email = "you@example.com" }
+  { name = "Keyne Oei", email = "keynekassapa13@gmail.com" }
 ]
 readme = "README.md"
 requires-python = ">=3.8"

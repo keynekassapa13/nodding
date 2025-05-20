@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="nodding",
-    version="0.1.0",
+    version="0.1.1",
     description="Detect nodding in a video.",
     author="Keyne Oei",
     author_email="keynekassapa13@gmail.com",

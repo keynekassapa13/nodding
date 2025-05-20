@@ -63,6 +63,24 @@ data/output/
 └── pitch_plot.png
 ```
 
+Annotated Video:
+- Pitch, Yaw, Roll Visualisation
+- Head Orientation Visualisation
+- Nod Text
+
+CSV Result:
+- Frame
+- Timestamp
+- Pitch Degree
+- Yaw Degree
+- Roll Degree
+- Is_Nod
+
+Pitch Plot:
+- Pitch
+- Nods
+
+
 ## Packaging (for maintaners)
 
 Build and install 
