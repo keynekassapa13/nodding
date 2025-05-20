@@ -15,6 +15,7 @@ from nodding.pose import (
     get_head_pose_angles
 )
 from nodding.nods import detect_nods
+from nodding.util import draw_head_orientation
 
 def process_video(input_path, output_dir):
     # Output Paths
@@ -135,6 +136,7 @@ def process_video(input_path, output_dir):
                         cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,0), 2)
             cv2.putText(final_frame, f"Roll:  {r:.1f}", (30, 90),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,0), 2)
+            draw_head_orientation(final_frame, p, y, r)
 
         if nod_mask[idx]:
             cv2.putText(final_frame, "NOD!", (30, 130),
