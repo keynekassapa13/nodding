@@ -1,0 +1,26 @@
+{
+    "OUTPUT": {
+        "FILES": {
+            "CSV": "nod_detection_results.csv",
+            "VIDEO": "annotated_video.mp4",
+            "PLOT": "pitch_plot.png"
+        }
+    },
+    "VIDEO": {
+        "DRAW": {
+            "FACE": true,
+            "LANDMARKS": true,
+            "SKELETON": true
+        },
+        "VIS": {
+            "TEXT": true,
+            "AXIS": false
+        }
+    },
+    "NODS": {
+        "THRESHOLD": 20.0,
+        "WINDOW_SIZE": 35,
+        "MIN_PAUSE": 5,
+        "PITCH_THRESHOLD": 10.0
+    }
+}

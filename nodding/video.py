@@ -17,17 +17,17 @@ from nodding.pose import (
 from nodding.nods import detect_nods
 from nodding.util import draw_head_orientation
 
-def process_video(input_path, output_dir):
+def process_video(cfg):
     # Output Paths
-    os.makedirs(output_dir, exist_ok=True)
-    out_csv = os.path.join(output_dir, "nod_detection_results.csv")
-    out_vid = os.path.join(output_dir, "annotated_video.mp4")
-    out_plot = os.path.join(output_dir, "pitch_plot.png")
+    os.makedirs(cfg.OUTPUT.PATH, exist_ok=True)
+    out_csv = os.path.join(cfg.OUTPUT.PATH, cfg.OUTPUT.FILES.CSV)
+    out_vid = os.path.join(cfg.OUTPUT.PATH, cfg.OUTPUT.FILES.VIDEO)
+    out_plot = os.path.join(cfg.OUTPUT.PATH, cfg.OUTPUT.FILES.PLOT)
 
-    logger.info(f"Processing video: {input_path}")
-    cap = cv2.VideoCapture(input_path)
+    logger.info(f"Processing video: {cfg.INPUT}")
+    cap = cv2.VideoCapture(cfg.INPUT)
     if not cap.isOpened():
-        logger.error(f"Error opening video file: {input_path}")
+        logger.error(f"Error opening video file: {cfg.INPUT}")
         return
     
     fps = cap.get(cv2.CAP_PROP_FPS)
@@ -51,7 +51,6 @@ def process_video(input_path, output_dir):
         results = face_mesh.process(rgb)
         if results.multi_face_landmarks:
             lm = results.multi_face_landmarks[0].landmark
-            # pitch = get_pitch(lm, (h, w))
             pitch, yaw, roll = get_head_pose_angles(lm, (h, w))
         else:
             pitch, yaw, roll = np.nan, np.nan, np.nan
@@ -69,7 +68,11 @@ def process_video(input_path, output_dir):
     rolls  = np.array(rolls)
     
     nod_mask, nod_indices = detect_nods(
-        pitches
+        pitches,
+        threshold=cfg.NODS.THRESHOLD,
+        window_size=cfg.NODS.WINDOW_SIZE,
+        min_pause=cfg.NODS.MIN_PAUSE,
+        pitch_threshold=cfg.NODS.PITCH_THRESHOLD
     )
 
     # CSV
@@ -81,7 +84,7 @@ def process_video(input_path, output_dir):
     logger.info(f"Saved nod detection CSV → {out_csv}")
 
     # Annotate video
-    cap = cv2.VideoCapture(input_path)
+    cap = cv2.VideoCapture(cfg.INPUT)
     idx = 0
     while True:
         ret, frame = cap.read()
@@ -93,7 +96,7 @@ def process_video(input_path, output_dir):
         pose_results = pose.process(rgb)
 
         # Draw Face Mesh
-        if face_results.multi_face_landmarks:
+        if cfg.VIDEO.DRAW.FACE and face_results.multi_face_landmarks:
             for face_lms in face_results.multi_face_landmarks:
                 mp_drawing.draw_landmarks(
                     final_frame,
@@ -105,17 +108,18 @@ def process_video(input_path, output_dir):
                 )
         
             # Draw Face Landmarks
-            landmark_idxs = [1, 152, 263, 33, 287, 57]
-            h, w, _ = final_frame.shape
-            for l_idx in landmark_idxs:
-                landmark = face_lms.landmark[l_idx]
-                cx, cy = int(landmark.x * w), int(landmark.y * h)
-                cv2.circle(final_frame, (cx, cy), 5, (0, 0, 255), -1)
-                cv2.putText(final_frame, str(l_idx), (cx + 5, cy - 5),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
+            if cfg.VIDEO.DRAW.LANDMARKS:
+                landmark_idxs = [1, 152, 263, 33, 287, 57]
+                h, w, _ = final_frame.shape
+                for l_idx in landmark_idxs:
+                    landmark = face_lms.landmark[l_idx]
+                    cx, cy = int(landmark.x * w), int(landmark.y * h)
+                    cv2.circle(final_frame, (cx, cy), 5, (0, 0, 255), -1)
+                    cv2.putText(final_frame, str(l_idx), (cx + 5, cy - 5),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
             
         # Draw Pose Skeleton
-        if pose_results.pose_landmarks:
+        if cfg.VIDEO.DRAW.POSE and pose_results.pose_landmarks:
             mp_drawing.draw_landmarks(
                 final_frame,
                 pose_results.pose_landmarks,
@@ -128,7 +132,7 @@ def process_video(input_path, output_dir):
         y = yaws[idx]
         r = rolls[idx]
 
-        if not np.isnan(p):
+        if cfg.VIDEO.VIS.TEXT:
             # text visualisation - (chatgpt) 
             cv2.putText(final_frame, f"Pitch: {p:.1f}", (30, 30),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,0), 2)
@@ -136,7 +140,8 @@ def process_video(input_path, output_dir):
                         cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,0), 2)
             cv2.putText(final_frame, f"Roll:  {r:.1f}", (30, 90),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,0), 2)
-            draw_head_orientation(final_frame, p, y, r)
+            if cfg.VIDEO.VIS.AXIS:
+                draw_head_orientation(final_frame, p, y, r)
 
         if nod_mask[idx]:
             cv2.putText(final_frame, "NOD!", (30, 130),
